@@ -13,19 +13,31 @@ const DEFAULT_VOICES = [
   { id: 'en-US-JennyNeural', name: 'Jenny', language: 'English (US)', languageCode: 'en-US', gender: 'Female', style: 'Warm & natural', sampleText: 'Welcome to Echo, a calmer way to turn text into voice.' },
   { id: 'en-US-GuyNeural', name: 'Guy', language: 'English (US)', languageCode: 'en-US', gender: 'Male', style: 'Professional & clear', sampleText: 'Hello, this is a clear and professional male voice delivery.' },
   { id: 'en-GB-RyanNeural', name: 'Ryan', language: 'English (UK)', languageCode: 'en-GB', gender: 'Male', style: 'Assured & articulate', sampleText: 'Greetings, this is an articulate British voice sample.' },
-  { id: 'hi-IN-SwaraNeural', name: 'Swara', language: 'Hindi', languageCode: 'hi-IN', gender: 'Female', style: 'Expressive & warm', sampleText: 'नमस्ते, Echo टेक्स्ट टू स्पीच में आपका स्वागत है।' },
-  { id: 'hi-IN-MadhurNeural', name: 'Madhur', language: 'Hindi', languageCode: 'hi-IN', gender: 'Male', style: 'Friendly & deep', sampleText: 'नमस्ते, आपकी आवाज़ तैयार है और बहुत स्पष्ट सुनाई दे रही है।' },
-  { id: 'gu-IN-DhwaniNeural', name: 'Dhwani', language: 'Gujarati', languageCode: 'gu-IN', gender: 'Female', style: 'Clear & calm', sampleText: 'નમસ્તે, Echo ટેક્સ્ટ ટુ સ્પીચ સ્ટુડિયોમાં આપનું સ્વાગત છે.' },
+  { id: 'hi-IN-SwaraNeural', name: 'Swara', language: 'Hindi', languageCode: 'hi-IN', gender: 'Female', style: 'Expressive & warm', sampleText: 'नमस्ते, Echo में आपका स्वागत है।' },
+  { id: 'hi-IN-MadhurNeural', name: 'Madhur', language: 'Hindi', languageCode: 'hi-IN', gender: 'Male', style: 'Friendly & deep', sampleText: 'नमस्ते, आपकी आवाज़ तैयार है।' },
+  { id: 'gu-IN-DhwaniNeural', name: 'Dhwani', language: 'Gujarati', languageCode: 'gu-IN', gender: 'Female', style: 'Clear & calm', sampleText: 'નમસ્તે, Echo ટેક્સ્ટ ટુ સ્પીચમાં આપનું સ્વાગત છે.' },
   { id: 'mr-IN-AarohiNeural', name: 'Aarohi', language: 'Marathi', languageCode: 'mr-IN', gender: 'Female', style: 'Melodic & distinct', sampleText: 'नमस्कार, Echo मध्ये आपले स्वागत आहे.' },
   { id: 'es-ES-ElviraNeural', name: 'Elvira', language: 'Spanish', languageCode: 'es-ES', gender: 'Female', style: 'Smooth & fluid', sampleText: 'Hola, bienvenido al estudio de voz Echo.' },
   { id: 'fr-FR-DeniseNeural', name: 'Denise', language: 'French', languageCode: 'fr-FR', gender: 'Female', style: 'Bright & graceful', sampleText: 'Bonjour, bienvenue sur le studio Echo.' },
   { id: 'de-DE-KatjaNeural', name: 'Katja', language: 'German', languageCode: 'de-DE', gender: 'Female', style: 'Energetic & clear', sampleText: 'Guten Tag, willkommen im Echo Studio.' }
 ];
 
+const LANGUAGE_SAMPLES = {
+  'hi-IN': 'नमस्ते! Echo में आपका स्वागत है। अपनी पसंदीदा आवाज़ चुनें।',
+  'gu-IN': 'નમસ્તે, Echo ટેક્સ્ટ ટુ સ્પીચમાં આપનું સ્વાગત છે. તમારી પસંદગીની વાચન અવાજ સાંભળો.',
+  'mr-IN': 'नमस्कार, Echo मध्ये आपले स्वागत आहे. तुमची आवडती भाषा आणि आवाजाची निवड करा.',
+  'es-ES': 'Hola, bienvenido al estudio de síntesis de voz natural Echo.',
+  'fr-FR': 'Bonjour, bienvenue sur le studio de synthèse vocale Echo.',
+  'de-DE': 'Guten Tag, willkommen im Echo Sprachstudio.',
+  'en-US': 'Welcome to Echo, a calmer way to turn your words into natural-sounding speech.',
+  'en-GB': 'Greetings, welcome to the natural speech synthesis studio.',
+  'ALL': 'Welcome to Echo, a calmer way to turn your words into natural-sounding speech.'
+};
+
 const BACKEND_URL = 'http://localhost:8080';
 
 export default function App() {
-  const [text, setText] = useState('Welcome to Echo, a calmer way to turn your words into natural-sounding speech using Spring Boot.');
+  const [text, setText] = useState('Welcome to Echo, a calmer way to turn your words into natural-sounding speech.');
   const [selectedLang, setSelectedLang] = useState('ALL');
   const [voices, setVoices] = useState(DEFAULT_VOICES);
   const [selectedVoiceId, setSelectedVoiceId] = useState(DEFAULT_VOICES[0].id);
@@ -45,6 +57,23 @@ export default function App() {
     const interval = setInterval(checkHealthAndFetchVoices, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleLanguageChange = (langCode) => {
+    setSelectedLang(langCode);
+
+    if (LANGUAGE_SAMPLES[langCode]) {
+      setText(LANGUAGE_SAMPLES[langCode]);
+    }
+
+    const langVoices = voices.filter((v) => {
+      if (langCode === 'ALL') return true;
+      return v.languageCode === langCode || v.language === langCode || (v.language && v.language.includes(langCode));
+    });
+
+    if (langVoices.length > 0) {
+      setSelectedVoiceId(langVoices[0].id);
+    }
+  };
 
   const checkHealthAndFetchVoices = async () => {
     try {
@@ -75,12 +104,12 @@ export default function App() {
     setError(null);
 
     if (!text.trim()) {
-      setError({ title: 'Validation Error', message: 'Text input cannot be empty. Please type or paste a script.' });
+      setError({ title: 'Validation Error', message: 'Text input cannot be empty. Please enter your script.' });
       return;
     }
 
     if (text.length > 5000) {
-      setError({ title: 'Validation Error', message: 'Text length exceeds the maximum 5,000 character limit.' });
+      setError({ title: 'Validation Error', message: 'Text length exceeds maximum 5,000 character limit.' });
       return;
     }
 
@@ -116,7 +145,7 @@ export default function App() {
       } catch (err) {
         setError({
           title: 'Network Error',
-          message: 'Unable to reach the Spring Boot backend server. Falling back to browser speech preview.'
+          message: 'Unable to connect to Spring Boot backend. Falling back to browser speech synthesis.'
         });
         fallbackWebSpeech();
       } finally {
@@ -145,16 +174,6 @@ export default function App() {
     <main className="app-shell">
       <Header isBackendOnline={isBackendOnline} checkingBackend={checkingBackend} />
 
-      <section className="hero-banner">
-        <div className="hero-text">
-          <p className="eyebrow">Natural Text-to-Speech Engine</p>
-          <h1>Transform text into <em>expressive audio</em></h1>
-          <p className="hero-description">
-            Convert scripts across multiple languages into high quality speech. Built with Spring Boot REST APIs and React.
-          </p>
-        </div>
-      </section>
-
       <ErrorMessage error={error} onDismiss={() => setError(null)} />
 
       <form className="studio-layout" onSubmit={handleGenerate}>
@@ -174,7 +193,7 @@ export default function App() {
         </div>
 
         <aside className="sidebar-column">
-          <LanguageSelector selectedLang={selectedLang} setSelectedLang={setSelectedLang} />
+          <LanguageSelector selectedLang={selectedLang} setSelectedLang={handleLanguageChange} />
 
           <VoiceSelector
             voices={voices}
@@ -190,8 +209,8 @@ export default function App() {
       </form>
 
       <footer className="app-footer">
-        <span>Echo Text-to-Speech Studio &copy; {new Date().getFullYear()}</span>
-        <span>Powered by Java Spring Boot &amp; React.js</span>
+        <span>Echo AI Studio &copy; {new Date().getFullYear()} — Production Build</span>
+        <span>Powered by Java Spring Boot REST API &amp; React</span>
       </footer>
     </main>
   );

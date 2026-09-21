@@ -43,15 +43,15 @@ export default function VoiceSelector({
   return (
     <section className="panel voice-panel">
       <div className="panel-heading">
-        <div>
-          <p className="section-kicker">02 / Voice & Delivery</p>
-          <h2>Voice Selection</h2>
+        <div className="panel-title-group">
+          <h2>Voice Settings</h2>
+          <span className="panel-subtitle">Select voice model & audio delivery</span>
         </div>
       </div>
 
       <div className="voice-dropdown-group">
         <label className="field-label" htmlFor="voice-select">
-          Voice
+          Voice Model
         </label>
         <div className="select-preview-row">
           <div className="select-wrapper">
@@ -87,7 +87,7 @@ export default function VoiceSelector({
       <div className="delivery-controls">
         <div className="slider-box">
           <div className="slider-header">
-            <label htmlFor="speed-slider">Speaking Speed (Rate)</label>
+            <label htmlFor="speed-slider">Speaking Speed</label>
             <span className="slider-val">{speed.toFixed(1)}x</span>
           </div>
           <div className="slider-row">

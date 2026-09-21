@@ -180,7 +180,7 @@ export default function AudioPlayer({
       const link = document.createElement('a');
       link.href = audioUrl;
       const ext = audioUrl.endsWith('.mp3') ? 'mp3' : 'wav';
-      link.download = `echo-speech-${activeVoice?.name || 'voice'}.${ext}`;
+      link.download = `speech-${activeVoice?.gender || 'audio'}.${ext}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -189,7 +189,7 @@ export default function AudioPlayer({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `echo-script-${activeVoice?.name || 'speech'}.txt`;
+      link.download = `script-${activeVoice?.gender || 'speech'}.txt`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -203,6 +203,10 @@ export default function AudioPlayer({
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
+
+  const activeVoiceTitle = activeVoice
+    ? `${activeVoice.language} (${activeVoice.gender || 'Voice'})`
+    : 'Selected Voice';
 
   return (
     <section className={`panel output-panel ${audioUrl ? 'ready' : ''}`}>
@@ -237,8 +241,8 @@ export default function AudioPlayer({
             )}
           </div>
           <div>
-            <p className="section-kicker">03 / Generated Speech Output</p>
-            <h2>{audioUrl ? `Multilingual Speech Ready (${activeVoice?.name || 'Selected Voice'})` : 'Your Generated Speech Player'}</h2>
+            <h2>{audioUrl ? `Audio Ready — ${activeVoiceTitle}` : 'Generated Audio Player'}</h2>
+            <span className="panel-subtitle">Synthesize script into high quality audio output</span>
           </div>
         </div>
 
@@ -250,7 +254,7 @@ export default function AudioPlayer({
         >
           {isGenerating ? (
             <>
-              <span className="spinner" /> Synthesizing Audio...
+              <span className="spinner" /> Synthesizing...
             </>
           ) : (
             <>
@@ -271,7 +275,7 @@ export default function AudioPlayer({
               type="button"
               onClick={togglePlay}
               aria-label={isPlaying ? 'Pause Speech' : 'Play Speech'}
-              title={isPlaying ? 'Pause' : 'Play native language audio'}
+              title={isPlaying ? 'Pause' : 'Play audio'}
             >
               {isPlaying ? (
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -360,7 +364,7 @@ export default function AudioPlayer({
             ))}
           </div>
           <p className="placeholder-text">
-            Select a voice, write your script, and press <strong>Generate Speech</strong> above to hear native multilingual audio.
+            Choose your language & voice, type a script, and click <strong>Generate Speech</strong> to synthesize audio.
           </p>
         </div>
       )}

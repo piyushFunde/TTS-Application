@@ -1,12 +1,5 @@
 import React from 'react';
 
-const SAMPLE_PRESETS = [
-  { label: 'Welcome Intro', text: 'Welcome to Echo, a calmer way to turn your written text into high quality natural speech.' },
-  { label: 'Hindi Sample', text: 'नमस्ते! Echo टेक्स्ट टू स्पीच में आपका स्वागत है। अपनी आवाज़ चुनें और सुनें।' },
-  { label: 'Gujarati Sample', text: 'નમસ્તે, Echo ટેક્સ્ટ ટુ સ્પીચ સ્ટુડિયોમાં આપનું સ્વાગત છે.' },
-  { label: 'Spanish Sample', text: 'Hola, bienvenido al estudio de síntesis de voz natural Echo.' },
-];
-
 export default function TextInput({ text, setText, maxCharacters = 5000 }) {
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const isNearLimit = text.length > maxCharacters * 0.9;
@@ -15,9 +8,9 @@ export default function TextInput({ text, setText, maxCharacters = 5000 }) {
   return (
     <section className="script-panel panel">
       <div className="panel-heading">
-        <div>
-          <p className="section-kicker">01 / Script Input</p>
-          <h2>Enter text to speak</h2>
+        <div className="panel-title-group">
+          <h2>Input Script</h2>
+          <span className="panel-subtitle">Type or paste text to synthesize</span>
         </div>
         {text && (
           <button 
@@ -26,23 +19,9 @@ export default function TextInput({ text, setText, maxCharacters = 5000 }) {
             onClick={() => setText('')}
             title="Clear text"
           >
-            Clear Text
+            Clear
           </button>
         )}
-      </div>
-
-      <div className="presets-bar">
-        <span className="presets-label">Quick Samples:</span>
-        {SAMPLE_PRESETS.map((preset, index) => (
-          <button
-            key={index}
-            type="button"
-            className="preset-chip"
-            onClick={() => setText(preset.text)}
-          >
-            {preset.label}
-          </button>
-        ))}
       </div>
 
       <div className="textarea-wrapper">
@@ -52,7 +31,7 @@ export default function TextInput({ text, setText, maxCharacters = 5000 }) {
           onChange={(e) => setText(e.target.value)}
           placeholder="Type or paste text here to convert into natural speech..."
           aria-label="Text to convert to speech"
-          rows={7}
+          rows={6}
         />
       </div>
 
