@@ -7,6 +7,8 @@ import VoiceSelector from './components/VoiceSelector';
 import AudioPlayer from './components/AudioPlayer';
 import ErrorMessage from './components/ErrorMessage';
 
+import GenerationHistory from './components/GenerationHistory';
+
 import './App.css';
 
 const DEFAULT_VOICES = [
@@ -20,6 +22,18 @@ const DEFAULT_VOICES = [
   { id: 'es-ES-ElviraNeural', name: 'Elvira', language: 'Spanish', languageCode: 'es-ES', gender: 'Female', style: 'Smooth & fluid', sampleText: 'Hola, bienvenido al estudio de voz Echo.' },
   { id: 'fr-FR-DeniseNeural', name: 'Denise', language: 'French', languageCode: 'fr-FR', gender: 'Female', style: 'Bright & graceful', sampleText: 'Bonjour, bienvenue sur le studio Echo.' },
   { id: 'de-DE-KatjaNeural', name: 'Katja', language: 'German', languageCode: 'de-DE', gender: 'Female', style: 'Energetic & clear', sampleText: 'Guten Tag, willkommen im Echo Studio.' }
+];
+
+const INITIAL_HISTORY = [
+  {
+    id: 1,
+    text: 'Welcome to Echo, a calmer way to turn your words into natural-sounding speech.',
+    voiceId: 'en-US-JennyNeural',
+    voiceName: 'English (US) Female',
+    audioUrl: 'browser-speech',
+    timestamp: 'Just now',
+    durationSeconds: 4
+  }
 ];
 
 const LANGUAGE_SAMPLES = {
@@ -50,6 +64,24 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const [isBackendOnline, setIsBackendOnline] = useState(false);
+
+  const [history, setHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tts_generation_history');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to parse history', e);
+    }
+    return INITIAL_HISTORY;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('tts_generation_history', JSON.stringify(history));
+    } catch (e) {
+      console.error('Failed to save history', e);
+    }
+  }, [history]);
 
   useEffect(() => {
     checkHealthAndFetchVoices();
@@ -96,6 +128,35 @@ export default function App() {
 
   const activeVoice = voices.find((v) => v.id === selectedVoiceId) || voices[0];
 
+  const addToHistory = (generatedUrl, durationVal) => {
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const voiceLabel = `${activeVoice.language} (${activeVoice.gender || 'Voice'})`;
+    const newItem = {
+      id: Date.now(),
+      text: text.trim(),
+      voiceId: activeVoice.id,
+      voiceName: voiceLabel,
+      audioUrl: generatedUrl,
+      timestamp: timeStr,
+      durationSeconds: durationVal
+    };
+    setHistory((prev) => [newItem, ...prev.slice(0, 19)]);
+  };
+
+  const handleSelectHistory = (item) => {
+    if (item.text) setText(item.text);
+    if (item.voiceId) setSelectedVoiceId(item.voiceId);
+    if (item.audioUrl) setAudioUrl(item.audioUrl);
+    if (item.durationSeconds) setDurationSeconds(item.durationSeconds);
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    try {
+      localStorage.removeItem('tts_generation_history');
+    } catch (e) {}
+  };
+
   const handleGenerate = async (e) => {
     if (e) e.preventDefault();
     setError(null);
@@ -133,8 +194,10 @@ export default function App() {
 
         if (response.ok && data.success) {
           const fullAudioUrl = `${BACKEND_URL}${data.audioUrl}`;
+          const calcDuration = data.durationSeconds || Math.max(2, Math.round(text.split(/\s+/).length / 2.5));
           setAudioUrl(fullAudioUrl);
-          setDurationSeconds(data.durationSeconds || Math.max(2, Math.round(text.split(/\s+/).length / 2.5)));
+          setDurationSeconds(calcDuration);
+          addToHistory(fullAudioUrl, calcDuration);
         } else {
           const msg = data.message || (data.validationErrors ? Object.values(data.validationErrors).join(', ') : 'Failed to generate speech');
           setError({ title: 'Backend Error', message: msg });
@@ -161,9 +224,11 @@ export default function App() {
     }
 
     window.setTimeout(() => {
+      const calcDuration = Math.max(2, Math.round(text.split(/\s+/).length / 2.5));
       setAudioUrl('browser-speech');
-      setDurationSeconds(Math.max(2, Math.round(text.split(/\s+/).length / 2.5)));
+      setDurationSeconds(calcDuration);
       setIsGenerating(false);
+      addToHistory('browser-speech', calcDuration);
     }, 400);
   };
 
@@ -204,8 +269,15 @@ export default function App() {
             pitch={pitch}
             setPitch={setPitch}
           />
+
+          <GenerationHistory
+            history={history}
+            onSelectHistory={handleSelectHistory}
+            onClearHistory={handleClearHistory}
+          />
         </aside>
       </form>
     </main>
   );
 }
+
