@@ -50,7 +50,6 @@ export default function App() {
   const [error, setError] = useState(null);
 
   const [isBackendOnline, setIsBackendOnline] = useState(false);
-  const [checkingBackend, setCheckingBackend] = useState(true);
 
   useEffect(() => {
     checkHealthAndFetchVoices();
@@ -92,8 +91,6 @@ export default function App() {
       }
     } catch (e) {
       setIsBackendOnline(false);
-    } finally {
-      setCheckingBackend(false);
     }
   };
 
@@ -174,14 +171,7 @@ export default function App() {
     <main className="app-shell">
       <div className="waveform-bg-pattern" />
 
-      <Header isBackendOnline={isBackendOnline} checkingBackend={checkingBackend} />
-
-      <section className="asymmetrical-hero">
-        <div className="hero-content">
-          <span className="hero-kicker">SPEECH SYNTHESIS ENGINE</span>
-          <h1 className="hero-title">Synthesize text into <span>natural audio.</span></h1>
-        </div>
-      </section>
+      <Header />
 
       <ErrorMessage error={error} onDismiss={() => setError(null)} />
 
@@ -216,11 +206,6 @@ export default function App() {
           />
         </aside>
       </form>
-
-      <footer className="app-footer">
-        <span>ECHO STUDIO &copy; {new Date().getFullYear()}</span>
-        <span>JAVA SPRING BOOT &amp; REACT</span>
-      </footer>
     </main>
   );
 }

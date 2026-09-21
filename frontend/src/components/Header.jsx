@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Header({ isBackendOnline, checkingBackend }) {
+export default function Header() {
   return (
     <header className="topbar">
       <div className="brand-group">
@@ -17,16 +17,6 @@ export default function Header({ isBackendOnline, checkingBackend }) {
         </div>
         <div className="brand-titles">
           <span className="brand-name">ECHO STUDIO</span>
-          <span className="brand-tagline">SPRING BOOT + REACT</span>
-        </div>
-      </div>
-
-      <div className="topbar-meta">
-        <div className="status-container">
-          <span className={`status-dot ${isBackendOnline ? 'online' : checkingBackend ? 'checking' : 'offline'}`} />
-          <span className="status-text">
-            {checkingBackend ? 'Connecting...' : isBackendOnline ? 'API Connected' : 'Offline Mode'}
-          </span>
         </div>
       </div>
     </header>
