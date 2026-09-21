@@ -18,45 +18,7 @@ Echo Studio is a production-ready, full-stack Text-to-Speech (TTS) web applicati
 
 ## 🏗️ Architecture Diagram
 
-```mermaid
-graph TD
-    subgraph Client ["Frontend (React.js + Vite)"]
-        UI["Echo Studio UI (100vh)"]
-        TI["InputScript Component"]
-        LS["LanguageSelector Component"]
-        VS["VoiceSelector Component"]
-        AP["AudioPlayer Component"]
-        GH["GenerationHistory Component"]
-    end
-
-    subgraph Backend ["Backend (Spring Boot REST API)"]
-        TC["TtsController (/api)"]
-        TS["TtsService (Audio Synthesis Engine)"]
-        DTO["DTOs (TtsRequest, TtsResponse, VoiceResponse)"]
-        FS["Audio Storage (/static/audio/*.wav)"]
-    end
-
-    subgraph Browser ["Client Browser Engine"]
-        WSA["Web Speech API (Fallback)"]
-        LS_STORE["localStorage (Session Log)"]
-    end
-
-    UI --> TI
-    UI --> LS
-    UI --> VS
-    UI --> AP
-    UI --> GH
-
-    AP -- "POST /api/tts" --> TC
-    VS -- "GET /api/voices" --> TC
-    TC --> DTO
-    TC --> TS
-    TS -- "Generates WAV Audio" --> FS
-    FS -- "Serves Audio /api/tts/audio/{file}" --> AP
-
-    AP -- "Network/Backend Offline" --> WSA
-    GH -- "Persists History" --> LS_STORE
-```
+<img width="5826" height="4715" alt="diagram (4)" src="https://github.com/user-attachments/assets/e53bc4d1-5f42-4841-b00e-6bac7f724608" />
 
 ---
 
