@@ -1,43 +1,59 @@
 package com.example.tts.controller;
 
 import com.example.tts.dto.TtsRequest;
+import com.example.tts.dto.TtsResponse;
 import com.example.tts.dto.VoiceResponse;
+import com.example.tts.service.TtsService;
 import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class TtsController {
+
+    private final TtsService ttsService;
+
+    public TtsController(TtsService ttsService) {
+        this.ttsService = ttsService;
+    }
+
     @GetMapping("/health")
-    public Map<String, String> health() {
-        return Map.of("status", "ok");
+    public ResponseEntity<Map<String, Object>> health() {
+        return ResponseEntity.ok(Map.of(
+            "status", "UP",
+            "service", "Echo Text-to-Speech API",
+            "timestamp", Instant.now().toString()
+        ));
     }
 
     @GetMapping("/voices")
-    public List<VoiceResponse> voices() {
-        return List.of(
-            new VoiceResponse("en-US-JennyNeural", "Jenny", "en-US", "Warm & natural"),
-            new VoiceResponse("en-GB-RyanNeural", "Ryan", "en-GB", "Clear & assured"),
-            new VoiceResponse("hi-IN-SwaraNeural", "Swara", "hi-IN", "Expressive"),
-            new VoiceResponse("fr-FR-DeniseNeural", "Denise", "fr-FR", "Bright & smooth")
-        );
+    public ResponseEntity<List<VoiceResponse>> voices() {
+        return ResponseEntity.ok(ttsService.getAllVoices());
     }
 
     @PostMapping("/tts")
-    public ResponseEntity<Map<String, Object>> createSpeech(@Valid @RequestBody TtsRequest request) {
-        return ResponseEntity.status(501).body(Map.of(
-            "success", false,
-            "message", "Connect a provider adapter and configure TTS_API_KEY before generating server audio.",
-            "language", request.language(),
-            "voice", request.voice()
-        ));
+    public ResponseEntity<TtsResponse> createSpeech(@Valid @RequestBody TtsRequest request) {
+        TtsResponse response = ttsService.synthesizeSpeech(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/tts/audio/{filename:.+}")
+    public ResponseEntity<Resource> getAudioFile(@PathVariable String filename) {
+        Resource audioResource = ttsService.loadAudioAsResource(filename);
+        String mediaType = filename.toLowerCase().endsWith(".mp3") ? "audio/mpeg" : "audio/wav";
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(mediaType))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+            .body(audioResource);
     }
 }
