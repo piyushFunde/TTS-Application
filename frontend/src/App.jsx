@@ -172,7 +172,16 @@ export default function App() {
 
   return (
     <main className="app-shell">
+      <div className="waveform-bg-pattern" />
+
       <Header isBackendOnline={isBackendOnline} checkingBackend={checkingBackend} />
+
+      <section className="asymmetrical-hero">
+        <div className="hero-content">
+          <span className="hero-kicker">SPEECH SYNTHESIS ENGINE</span>
+          <h1 className="hero-title">Synthesize text into <span>natural audio.</span></h1>
+        </div>
+      </section>
 
       <ErrorMessage error={error} onDismiss={() => setError(null)} />
 
@@ -209,8 +218,8 @@ export default function App() {
       </form>
 
       <footer className="app-footer">
-        <span>Echo AI Studio &copy; {new Date().getFullYear()} — Production Build</span>
-        <span>Powered by Java Spring Boot REST API &amp; React</span>
+        <span>ECHO STUDIO &copy; {new Date().getFullYear()}</span>
+        <span>JAVA SPRING BOOT &amp; REACT</span>
       </footer>
     </main>
   );
