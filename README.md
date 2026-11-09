@@ -1,28 +1,28 @@
-# 🎙️ Echo Studio — Full-Stack Text-to-Speech Application
+# Echo Studio — Full-Stack Text-to-Speech Application
 
 Echo Studio is a production-ready, full-stack Text-to-Speech (TTS) web application built with a **Java 17 Spring Boot REST API backend** and a **React.js (Vite) frontend**. It provides a single-screen (100vh) audio production interface featuring multilingual voice synthesis, fine-grained speech controls, audio visualizer, download capabilities, and a persistent generation history session log.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-- ⚡ **Single-Screen 100vh Layout**: A non-scrolling UI designed for maximum screen utilization.
-- 🎨 **Warm Amber-on-Charcoal Aesthetics**: Crafted with Space Grotesk & Plus Jakarta Sans typography, sleek dark mode cards, and sound-motif animations.
-- 🗣️ **Multilingual Voice Support**: Filter voices across multiple languages including English (US & UK), Hindi, Gujarati, Marathi, Spanish, French, and German.
-- 🎛️ **Speech Delivery Controls**: Fine-tune speaking speed (0.5x to 2.0x) and voice pitch (0.5x to 1.5x) with instant preview.
-- 📜 **Interactive Session History**: Logs recent audio clips with script snippets, voice tags, timestamps, and mini replay buttons (persisted in `localStorage`).
-- 🎵 **Full Audio Player**: Integrated waveform audio visualizer, time scrubber, volume control, and `.wav` file downloader.
-- 🛡️ **Dual-Engine Speech Synthesis**: High-quality Spring Boot backend WAV synthesizer with seamless automatic fallback to browser Web Speech API.
+- **Single-Screen 100vh Layout**: A non-scrolling UI designed for maximum screen utilization.
+- **Warm Amber-on-Charcoal Aesthetics**: Crafted with Space Grotesk & Plus Jakarta Sans typography, sleek dark mode cards, and sound-motif animations.
+- **Multilingual Voice Support**: Filter voices across multiple languages including English (US & UK), Hindi, Gujarati, Marathi, Spanish, French, and German.
+- **Speech Delivery Controls**: Fine-tune speaking speed (0.5x to 2.0x) and voice pitch (0.5x to 1.5x) with instant preview.
+- **Interactive Session History**: Logs recent audio clips with script snippets, voice tags, timestamps, and mini replay buttons (persisted in `localStorage`).
+- **Full Audio Player**: Integrated waveform audio visualizer, time scrubber, volume control, and `.wav` file downloader.
+- **Dual-Engine Speech Synthesis**: High-quality Spring Boot backend WAV synthesizer with seamless automatic fallback to browser Web Speech API.
 
 ---
 
-## 🏗️ Architecture Diagram
+## Architecture Diagram
 
 <img width="5826" height="4715" alt="diagram (4)" src="https://github.com/user-attachments/assets/e53bc4d1-5f42-4841-b00e-6bac7f724608" />
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technologies & Tools |
 | :--- | :--- |
@@ -33,7 +33,7 @@ Echo Studio is a production-ready, full-stack Text-to-Speech (TTS) web applicati
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -79,7 +79,7 @@ The React frontend application will open on **`http://localhost:5173`**.
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 TTS-Application/
@@ -118,8 +118,4 @@ TTS-Application/
 └── README.md                               # Project Documentation
 ```
 
----
 
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
